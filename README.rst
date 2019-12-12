@@ -85,7 +85,7 @@ Optional Integrations
 .. _PythonAnywhere: https://www.pythonanywhere.com/
 .. _Traefik: https://traefik.io/
 .. _LetsEncrypt: https://letsencrypt.org/
-.. _pre-commit: https://github.com/pre-commit/pre-commit 
+.. _pre-commit: https://github.com/pre-commit/pre-commit
 
 Constraints
 -----------
@@ -156,6 +156,7 @@ Answer the prompts with your own desired options_. For example::
     project_name [Project Name]: Reddit Clone
     project_slug [reddit_clone]: reddit
     author_name [Daniel Roy Greenfeld]: Daniel Greenfeld
+    code_owner [Daniel Greenfeld]: danielgreenfield
     email [you@example.com]: pydanny@gmail.com
     description [Behold My Awesome Project!]: A reddit clone.
     domain_name [example.com]: myreddit.com
