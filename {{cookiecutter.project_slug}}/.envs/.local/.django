@@ -3,6 +3,10 @@
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 
+# PostgreSQL
+# ------------------------------------------------------------------------------
+DATABASE_URL=postgres://postgres:!!!SET POSTGRES_PASSWORD!!!@127.0.0.1:5432/{{ cookiecutter.project_slug }}
+
 {%- if cookiecutter.use_celery == 'y' %}
 # Redis
 # ------------------------------------------------------------------------------
@@ -10,6 +14,7 @@ REDIS_URL=redis://redis:6379/0
 
 # Celery
 # ------------------------------------------------------------------------------
+CELERY_BROKER_URL=redis://localhost:6379/0
 
 # Flower
 CELERY_FLOWER_USER=!!!SET CELERY_FLOWER_USER!!!

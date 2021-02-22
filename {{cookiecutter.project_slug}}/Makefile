@@ -29,7 +29,6 @@ help: ## Show this help
 # -------------------------------------------------------------------------------------
 # LOCAL DEV
 # -------------------------------------------------------------------------------------
-
 startproject: install env-vars ## Install requirements, apply migrations and create local admin
 
 setup: startproject migrate create-superuser # Setup the project
@@ -69,7 +68,6 @@ export $$(grep -v '^#' ./.envs/.local/.django | xargs)
 export $$(grep -v '^#' ./.envs/.local/.postgres | xargs)
 endef
 
-#
 export LOCAL_ENV_VARS
 env-vars: ## Load local env vars to os from virtualenv
 	@echo -e "$$LOCAL_ENV_VARS" >> $(BIN)/activate
