@@ -1,4 +1,4 @@
-# Makefile for "{{ cookiecutter.project_name }}"
+# Makefile for "My Awesome Project"
 SHELL := /bin/bash
 
 # Variables
@@ -16,7 +16,7 @@ include $(ENV)
 include $(ENVS)/.local/.django
 include $(ENVS)/.local/.postgres
 
-.PHONY: help venv install migrate startproject runserver django-shell db-up db-shell test coverage travis
+.PHONY: help
 
 .DEFAULT_GOAL := help
 
@@ -26,6 +26,15 @@ help: ## Show this help
 # -------------------------------------------------------------------------------------
 # LOCAL DEV
 # -------------------------------------------------------------------------------------
+
+.PHONY= startproject
+startproject: install env-vars ## Install requirements, apply migrations and create local admin
+
+.PHONY= setup
+setup: startproject migrate create-superuser # Setup the project
+
+.PHONY= start
+start: setup runserver # Setup the project and run the dev server
 
 # Install Project
 # -------------------------------------------------------------------------------------
@@ -40,12 +49,13 @@ migrate: ## Make migrate
 	$(PYTHON) manage.py migrate
 
 # Create a super user from env var
-# You need to define an env var : DJANGO_DEV_ADMIN_LOCAL.
+# You need to define an env var : DJANGO_DEV_ADMIN_LOCAL
 # DJANGO_DEV_ADMIN_LOCAL=name:email:password
-# Or Make get it from .envs/.local/.django
-# Default one defined
-DJANGO_DEV_ADMIN_LOCAL=${DJANGO_DEV_ADMIN_LOCAL:-testadmin:testadmin@testapi.com:123asX3?23}
+# Or get it from .envs/.local/.django
+# If none set, the default one:
+DJANGO_DEV_ADMIN_LOCAL?=testadmin:testadmin@testapi.com:123asX3?23
 create-superuser: ## Create local django admin user
+	@echo "Creating Super User"
 	@echo "from django.contrib.auth import get_user_model;"\
 		"User = get_user_model();" \
 		"User.objects.create_superuser(*'$(DJANGO_DEV_ADMIN_LOCAL)'.split(':'))" \
@@ -66,14 +76,6 @@ endef
 export LOCAL_ENV_VARS
 env-vars:
 	@echo -e "$$LOCAL_ENV_VARS" >> $(BIN)/activate
-
-startproject: install migrate create-superuser ## Install requirements, apply migrations and create local admin
-
-.PHONY= setup
-setup: startproject env-vars # Start project and add environments
-
-.PHONY= start
-start: setup runserver # Setup the project and run the dev server
 
 # Utils
 # -------------------------------------------------------------------------------------
@@ -103,3 +105,10 @@ coverage: ## Clear and run tests with coverage report
 	coverage run -m pytest
 	coverage report -m
 	coverage html
+
+# Clean
+# -------------------------------------------------------------------------------------
+.PHONY: clean
+clean:
+	rm db.sqlite3
+	gm -rf .venv/
