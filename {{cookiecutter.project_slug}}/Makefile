@@ -51,7 +51,29 @@ create-superuser: ## Create local django admin user
 		"User.objects.create_superuser(*'$(DJANGO_DEV_ADMIN_LOCAL)'.split(':'))" \
 		| $(PYTHON) manage.py shell
 
+define LOCAL_ENV_VARS
+\n# PROJECT ENVs
+# ------------------------------------------------------------------------------
+# local envs
+export DATABASE_URL=postgres://postgres:debug@127.0.0.1:5432/{{ cookiecutter.project_slug }}
+export CELERY_BROKER_URL=redis://localhost:6379/0
+# .env files
+export $$(grep -v '^#' ./.envs/.local/.django | xargs)
+export $$(grep -v '^#' ./.envs/.local/.postgres | xargs)
+endef
+
+.PHONY= env-vars
+export LOCAL_ENV_VARS
+env-vars:
+	@echo -e "$$LOCAL_ENV_VARS" >> $(BIN)/activate
+
 startproject: install migrate create-superuser ## Install requirements, apply migrations and create local admin
+
+.PHONY= setup
+setup: startproject env-vars # Start project and add environments
+
+.PHONY= start
+start: setup runserver # Setup the project and run the dev server
 
 # Utils
 # -------------------------------------------------------------------------------------
