@@ -41,8 +41,11 @@ venv: ## Make a new virtual environment
 	# Current version of Cookiecutter Django works with python 3.8
 	virtualenv -p python3.8 $(VENV) && source $(BIN)/activate
 
-install: venv ## Make venv and install local requirements
+install: npm-install venv ## Make venv and install local requirements
 	$(BIN)/pip install -r requirements/local.txt
+
+npm-install:
+	npm install
 
 migrate: ## Make migrate
 	$(PYTHON) manage.py migrate
@@ -85,8 +88,14 @@ allmigrations: makemigrations migrate ## Make migrations and migrate
 
 # Run Local
 # -------------------------------------------------------------------------------------
-runserver: ## Run the Django server
+runserver:
+	make -j 2 django-server npm-server
+
+django-server: ## Run the Django server
 	$(PYTHON) manage.py runserver $(DJANGO_PORT)
+
+npm-server:
+	npm run dev
 
 django-shell: ## Run ipython in django shell
 	$(PYTHON) manage.py shell -i ipython
