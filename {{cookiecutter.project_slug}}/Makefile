@@ -1,4 +1,4 @@
-# Makefile for "My Awesome Project"
+# Makefile for {{ cookiecutter.project_name }}
 SHELL := /bin/bash
 
 # Variables
@@ -16,7 +16,10 @@ include $(ENV)
 include $(ENVS)/.local/.django
 include $(ENVS)/.local/.postgres
 
-.PHONY: help
+# Export all variable to sub-make
+export
+
+.PHONY: help startproject setup start venv install migrate create-superuser env-vars runserver test coverage clean
 
 .DEFAULT_GOAL := help
 
@@ -27,13 +30,10 @@ help: ## Show this help
 # LOCAL DEV
 # -------------------------------------------------------------------------------------
 
-.PHONY= startproject
 startproject: install env-vars ## Install requirements, apply migrations and create local admin
 
-.PHONY= setup
 setup: startproject migrate create-superuser # Setup the project
 
-.PHONY= start
 start: setup runserver # Setup the project and run the dev server
 
 # Install Project
@@ -64,17 +64,14 @@ create-superuser: ## Create local django admin user
 define LOCAL_ENV_VARS
 \n# PROJECT ENVs
 # ------------------------------------------------------------------------------
-# local envs
-export DATABASE_URL=postgres://postgres:debug@127.0.0.1:5432/{{ cookiecutter.project_slug }}
-export CELERY_BROKER_URL=redis://localhost:6379/0
 # .env files
 export $$(grep -v '^#' ./.envs/.local/.django | xargs)
 export $$(grep -v '^#' ./.envs/.local/.postgres | xargs)
 endef
 
-.PHONY= env-vars
+#
 export LOCAL_ENV_VARS
-env-vars:
+env-vars: ## Load local env vars to os from virtualenv
 	@echo -e "$$LOCAL_ENV_VARS" >> $(BIN)/activate
 
 # Utils
@@ -90,11 +87,11 @@ allmigrations: makemigrations migrate ## Make migrations and migrate
 
 # Run Local
 # -------------------------------------------------------------------------------------
-django-shell: ## Run ipython in django shell
-	$(PYTHON) manage.py shell -i ipython
-
 runserver: ## Run the Django server
 	$(PYTHON) manage.py runserver $(DJANGO_PORT)
+
+django-shell: ## Run ipython in django shell
+	$(PYTHON) manage.py shell -i ipython
 
 # Test
 # -------------------------------------------------------------------------------------
@@ -108,7 +105,6 @@ coverage: ## Clear and run tests with coverage report
 
 # Clean
 # -------------------------------------------------------------------------------------
-.PHONY: clean
 clean:
 	rm db.sqlite3
 	gm -rf .venv/
