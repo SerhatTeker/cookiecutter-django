@@ -3,10 +3,6 @@
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 
-# PostgreSQL
-# ------------------------------------------------------------------------------
-DATABASE_URL=postgres://postgres:!!!SET POSTGRES_PASSWORD!!!@127.0.0.1:5432/{{ cookiecutter.project_slug }}
-
 {%- if cookiecutter.use_celery == 'y' %}
 # Redis
 # ------------------------------------------------------------------------------
