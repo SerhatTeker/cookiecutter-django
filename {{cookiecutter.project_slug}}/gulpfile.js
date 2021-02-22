@@ -145,7 +145,7 @@ function initBrowserSync() {
         proxy: 'localhost:8000'
         {% else %}
         proxy:  {
-          target: 'django:8000',
+          target: 'localhost:8000',
           proxyReq: [
             function(proxyReq, req) {
               // Assign proxy "host" header same as current request at Browsersync server
