@@ -324,6 +324,7 @@ Session.vim
 
 # Auto-generated tag files
 tags
+tags.*
 
 ### Project template
 {% if cookiecutter.use_mailhog == 'y' and cookiecutter.use_docker == 'n' %}
