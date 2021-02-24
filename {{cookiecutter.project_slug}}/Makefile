@@ -90,10 +90,10 @@ allmigrations: makemigrations migrate ## Make migrations and migrate
 # -------------------------------------------------------------------------------------
 {%- if cookiecutter.use_async == 'y' %}
 servers:
-	make -j 2 npm-server django-server
+	make -j 2 npm-server django-server-async
 {%- else %}
 servers:
-	make -j 2 npm-server django-server-async
+	make -j 2 npm-server django-server
 {% endif %}
 
 django-server-async: ## Run the Django async server
