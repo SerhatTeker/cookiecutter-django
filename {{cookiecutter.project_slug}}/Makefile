@@ -19,7 +19,7 @@ include $(ENVS)/.local/.postgres
 # Export all variable to sub-make
 export
 
-.PHONY: help startproject setup start venv install migrate create-superuser env-vars runserver test coverage clean
+.PHONY: help startproject setup start venv install migrate create-superuser env-vars servers test coverage clean
 
 .DEFAULT_GOAL := help
 
@@ -88,8 +88,16 @@ allmigrations: makemigrations migrate ## Make migrations and migrate
 
 # Run Local
 # -------------------------------------------------------------------------------------
-runserver:
-	make -j 2 django-server npm-server
+{%- if cookiecutter.use_async == 'y' %}
+servers:
+	make -j 2 npm-server django-server
+{%- else %}
+servers:
+	make -j 2 npm-server django-server-async
+{% endif %}
+
+django-server-async: ## Run the Django async server
+	uvicorn config.asgi:application --host 0.0.0.0 --reload
 
 django-server: ## Run the Django server
 	$(PYTHON) manage.py runserver $(DJANGO_PORT)
